@@ -43,6 +43,13 @@ def gh(*args):
     return p.stdout
 
 def api(path):return json.loads(gh('api',path))
+def find_release(tag):
+    # Drafts may not yet have a Git tag and the releases/tags endpoint can 404.
+    # Listing releases with this repository's write token includes its drafts.
+    pages=json.loads(gh('api','--paginate','--slurp','repos/'+REPOSITORY+'/releases?per_page=100'))
+    matches=[r for page in pages for r in page if r['tag_name']==tag]
+    assert len(matches)<=1,'Duplicate releases for native version'
+    return matches[0] if matches else None
 def publish(root,doc,asset):
     # GITHUB_TOKEN is scoped to this public release repository. No source token.
     assert os.environ.get('GITHUB_REPOSITORY',REPOSITORY)==REPOSITORY
@@ -50,13 +57,13 @@ def publish(root,doc,asset):
     assert not repo['private'],'Release repository must be public'
     files=[asset,root/'SHA256SUMS.txt']
     expected={p.name:('sha256:'+sha(p.read_bytes()),p.stat().st_size) for p in files}
-    tag=doc['tag'];endpoint='repos/'+REPOSITORY+'/releases/tags/'+tag
-    try:release=api(endpoint)
-    except RuntimeError as e:
-        if '404' not in str(e):raise
+    tag=doc['tag'];release=find_release(tag)
+    if release is None:
         args=['release','create',tag,'--repo',REPOSITORY,'--draft','--title','PS5 Browser native '+doc['version'],'--notes-file',str(root/'RELEASE-NOTES.txt')]
         if os.environ.get('GITHUB_SHA'):args+=['--target',os.environ['GITHUB_SHA']]
-        gh(*args);release=api(endpoint)
+        gh(*args);release=find_release(tag)
+        assert release is not None,'New draft could not be found'
+    endpoint='repos/'+REPOSITORY+'/releases/'+str(release['id'])
     if release['draft']:
         existing={a['name']:a for a in release['assets']}
         assert not(set(existing)-set(expected)),'Unexpected draft assets'
