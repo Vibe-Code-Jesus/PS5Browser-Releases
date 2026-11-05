@@ -7,8 +7,17 @@ Extract the complete PPSA99257 folder and replace the installed app folder conte
 Keep /data/ps5browser: bookmarks, cookies, settings and downloaded files live there.
 
 The browser checks for newer native packages at launch and every 30 minutes.
-A new version appears in the app. This build opens the release for manual
-installation; whole-package self-installation/restart is still in development.
+A new version appears on the main screen. Click **Update via GitHub** to download,
+verify, install and restart automatically. Old package files are removed only
+after the new native app and browser core confirm startup. A failed startup
+restores the previous package. Browser data stays in place.
+
+**First install:** versions .006 and earlier need one manual replacement with
+this complete package to gain the installer. Subsequent releases use the button.
+
+This is a native preview for PS5/ProsperoStore review. Local integration,
+rollback and package checks passed; actual PS5 restart and storage behavior
+still need console confirmation.
 
 The existing homebrew environment must already support this app's launch service.
 This repository distributes compiled packages, notices and release automation.

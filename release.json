@@ -1,10 +1,10 @@
 {
   "repository": "Vibe-Code-Jesus/PS5Browser-Releases",
   "title_id": "PPSA99257",
-  "version": "01.000.006",
-  "core_version": "4.4.25.4",
-  "tag": "native-v01.000.006",
-  "asset": "PS5Browser-Native-01.000.006-Preview.zip",
-  "size": 21808791,
-  "sha256": "31f68ceb54aa394fa4c757667014c9d5a8d0f373f9986426f6e4320f0b32cba3"
+  "version": "01.000.007",
+  "core_version": "4.4.25.5",
+  "tag": "native-v01.000.007",
+  "asset": "PS5Browser-Native-01.000.007-Preview.zip",
+  "size": 22624777,
+  "sha256": "b2974bc099a157f4d6bca646e5582785ced067ca21a0b61a0a4c1b036ec07f9c"
 }

@@ -13,8 +13,8 @@ def validate(root):
     assert doc['tag']=='native-v'+v and doc['asset']==name
     asset=root/name;data=asset.read_bytes()
     assert 1024<len(data)<=134217728 and len(data)==doc['size'] and sha(data)==doc['sha256'],'ZIP integrity mismatch'
-    allowed={'eboot.bin','sce_sys/param.json','sce_sys/icon0.png','sce_module/libc.prx','assets/ps5browser.elf','assets/build-info.json','PREVIEW.txt','THIRD-PARTY-NOTICES.txt'}
-    licenses={'FFmpeg-n7.0.1-COPYING.GPLv2','FFmpeg-n7.0.1-LICENSE.md','dav1d-1.5.3-COPYING','mbedtls-LICENSE','native-boilerplate-GPL-3.0.txt','openlibm-0.8.6-LICENSE.md','qrcode-LICENSE.txt','unrar-license.txt','x264-stable-COPYING','zlib-LICENSE'}
+    allowed={'eboot.bin','sce_sys/param.json','sce_sys/icon0.png','sce_module/libc.prx','assets/ps5browser.elf','assets/native-recovery.elf','assets/build-info.json','PREVIEW.txt','THIRD-PARTY-NOTICES.txt'}
+    licenses={'miniz-LICENSE','FFmpeg-n7.0.1-COPYING.GPLv2','FFmpeg-n7.0.1-LICENSE.md','dav1d-1.5.3-COPYING','mbedtls-LICENSE','native-boilerplate-GPL-3.0.txt','openlibm-0.8.6-LICENSE.md','qrcode-LICENSE.txt','unrar-license.txt','x264-stable-COPYING','zlib-LICENSE'}
     with zipfile.ZipFile(asset) as z:
         assert 8<=len(z.infolist())<=40
         names=set();total=0
@@ -30,6 +30,9 @@ def validate(root):
         p=json.loads(z.read(TITLE+'/sce_sys/param.json'));m=json.loads(z.read(TITLE+'/assets/build-info.json'))
         assert p['titleId']==TITLE and p['contentVersion']==v and p['contentId']=='UP9000-PPSA99257_00-PS5BROWSER000001'
         assert m['title_id']==TITLE and m['content_version']==v and m['release_repository']==REPOSITORY and m['core_version']==doc['core_version']
+        helper=z.read(TITLE+'/assets/native-recovery.elf')
+        assert len(helper)==m['helper_size'] and sha(helper)==m['helper_sha256'] and helper.startswith(b'\x7fELF\2\1\1')
+        assert m['native_self_update_ready'] is True
         core=z.read(TITLE+'/assets/ps5browser.elf')
         assert len(core)==m['core_size'] and sha(core)==m['core_sha256'] and core.startswith(b'\x7fELF\2\1\1')
         assert z.read(TITLE+'/eboot.bin').startswith(bytes.fromhex('4f153d1d'))
