@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Binary release automation only; no PS5Browser application source is included."""
 from pathlib import Path
-import argparse,hashlib,json,os,re,stat,subprocess,zipfile
+import argparse,hashlib,json,os,re,stat,subprocess,tempfile,time,zipfile
+from urllib.parse import quote
 REPOSITORY='Vibe-Code-Jesus/PS5Browser-Releases'
 TITLE='PPSA99257'
 def sha(data):return hashlib.sha256(data).hexdigest()
@@ -46,6 +47,10 @@ def gh(*args):
     return p.stdout
 
 def api(path):return json.loads(gh('api',path))
+def write_api(path,method,body):
+    with tempfile.NamedTemporaryFile(mode='w',suffix='.json') as f:
+        json.dump(body,f);f.flush()
+        return json.loads(gh('api','--method',method,path,'--input',f.name))
 def find_release(tag):
     # Drafts may not yet have a Git tag and the releases/tags endpoint can 404.
     # Listing releases with this repository's write token includes its drafts.
@@ -62,10 +67,11 @@ def publish(root,doc,asset):
     expected={p.name:('sha256:'+sha(p.read_bytes()),p.stat().st_size) for p in files}
     tag=doc['tag'];release=find_release(tag)
     if release is None:
-        args=['release','create',tag,'--repo',REPOSITORY,'--draft','--title','PS5 Browser native '+doc['version'],'--notes-file',str(root/'RELEASE-NOTES.txt')]
-        if os.environ.get('GITHUB_SHA'):args+=['--target',os.environ['GITHUB_SHA']]
-        gh(*args);release=find_release(tag)
-        assert release is not None,'New draft could not be found'
+        body={'tag_name':tag,'name':'PS5 Browser native '+doc['version'],
+              'body':(root/'RELEASE-NOTES.txt').read_text(),'draft':True,'prerelease':False}
+        if os.environ.get('GITHUB_SHA'):body['target_commitish']=os.environ['GITHUB_SHA']
+        # Use the creation response ID; release listings can lag behind writes.
+        release=write_api('repos/'+REPOSITORY+'/releases','POST',body)
     endpoint='repos/'+REPOSITORY+'/releases/'+str(release['id'])
     if release['draft']:
         existing={a['name']:a for a in release['assets']}
@@ -73,12 +79,20 @@ def publish(root,doc,asset):
         for p in files:
             if p.name in existing:
                 a=existing[p.name];assert (a.get('digest'),a['size'])==expected[p.name],'Existing draft differs; use a new version'
-            else:gh('release','upload',tag,str(p),'--repo',REPOSITORY)
+            else:
+                uploaded=json.loads(gh('api','--method','POST',
+                    'https://uploads.github.com/repos/'+REPOSITORY+'/releases/'+str(release['id'])+'/assets?name='+quote(p.name),
+                    '-H','Content-Type: application/octet-stream','--input',str(p)))
+                assert (uploaded.get('digest'),uploaded['size'])==expected[p.name],'Uploaded asset differs; draft retained'
         release=api(endpoint)
     actual={a['name']:(a.get('digest'),a['size']) for a in release['assets']}
     assert actual==expected,'GitHub asset digest/size verification failed; draft retained'
-    if release['draft']:gh('release','edit',tag,'--repo',REPOSITORY,'--draft=false','--prerelease=false','--latest')
-    latest=api('repos/'+REPOSITORY+'/releases/latest')
+    if release['draft']:write_api(endpoint,'PATCH',{'draft':False,'prerelease':False,'make_latest':'true'})
+    latest={}
+    for attempt in range(6):
+        latest=api('repos/'+REPOSITORY+'/releases/latest')
+        if latest['tag_name']==tag:break
+        time.sleep(1)
     assert latest['tag_name']==tag,'Published release is not latest'
     print('Published and verified '+latest['html_url'])
 if __name__=='__main__':
