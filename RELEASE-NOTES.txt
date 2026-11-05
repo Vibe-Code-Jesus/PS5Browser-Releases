@@ -1,6 +1,6 @@
-PS5 Browser native 01.000.007 / original browser core 4.4.25.5
+PS5 Browser native 01.000.008 / original browser core 4.4.25.6
 
-GitHub updates are now enabled end to end: startup/every-30-minute checks, main-screen notice, Update via GitHub, verified download, whole-package installation, native restart and core restart. Previous package files are removed only after matching native and core versions confirm startup. Failed startup rolls back; browser data is preserved.
+GitHub updates are now enabled end to end: startup/every-30-minute checks, main-screen notice, Update via GitHub, verified download, whole-package installation, native restart and core restart. Previous package files are removed only after matching native and core versions confirm startup. Failed startup stops the identified replacement core and rolls back; browser data is preserved.
 
 Includes the independent native recovery helper and detailed update-phase logs. Keeps the black backdrop and fresh Home with toolbar. Public package contains compiled files and notices, not application source.
 
