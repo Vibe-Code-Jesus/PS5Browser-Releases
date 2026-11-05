@@ -1,0 +1,6 @@
+PS5 Browser native 01.000.006 / original browser core 4.4.25.4
+
+Plain black native background during normal startup/use; errors remain visible.
+Fresh Home startup and Reset tabs retained. GitHub checks now compare native package versions and show new releases in the browser.
+
+Manual package installation for this preview. Whole-package self-install/restart is not enabled. Local code, transport and package validation passed; this revision still needs PS5 confirmation.
