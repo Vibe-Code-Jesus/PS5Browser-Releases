@@ -29,6 +29,8 @@ def validate(root):
         assert total<=268435456 and allowed<=names
         assert z.testzip() is None
         p=json.loads(z.read(TITLE+'/sce_sys/param.json'));m=json.loads(z.read(TITLE+'/assets/build-info.json'))
+        for filename in ('param.json','icon0.png'):
+            assert (root/'sce_sys'/filename).read_bytes()==z.read(TITLE+'/sce_sys/'+filename),'Public listing metadata differs from package: '+filename
         assert p['titleId']==TITLE and p['contentVersion']==v and p['contentId']=='UP9000-PPSA99257_00-PS5BROWSER000001'
         assert m['title_id']==TITLE and m['content_version']==v and m['release_repository']==REPOSITORY and m['core_version']==doc['core_version']
         helper=z.read(TITLE+'/assets/native-recovery.elf')

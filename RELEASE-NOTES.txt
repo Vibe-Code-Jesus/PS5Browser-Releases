@@ -100,12 +100,10 @@ update downloads. Failed startup triggers rollback; browser data is preserved.
 
 ## This release
 
-PS5 Browser native 01.000.008 / original browser core 4.4.25.6
+PS5 Browser native 01.000.009 / original browser core 4.4.25.7
 
-GitHub updates are now enabled end to end: startup/every-30-minute checks, main-screen notice, Update via GitHub, verified download, whole-package installation, native restart and core restart. Previous package files are removed only after matching native and core versions confirm startup. Failed startup stops the identified replacement core and rolls back; browser data is preserved.
+Startup fix: the native updater now reads its per-launch token from /dev/urandom. If the device cannot supply the full token, the browser can continue and update control remains unavailable for that session. The startup log identifies the last stage reached.
 
-Includes the independent native recovery helper and detailed update-phase logs. Keeps the black backdrop and fresh Home with toolbar. Public package contains compiled files and notices, not application source.
+Thanks to youss17x for isolating and testing the workaround on firmware 13.60 (issue #2). This rebuilt package still needs confirmation on affected consoles.
 
-ONE FINAL MANUAL INSTALL: versions .006 and earlier need this complete folder replacement to gain the installer. Future versions use Update via GitHub.
-
-Preview for PS5/ProsperoStore review: local build, integration, checksum rejection, restart-failure rollback, interruption recovery, UI and package checks passed. Actual PS5 restart/mount behavior requires console confirmation; no hardware test is claimed.
+If the installed version crashes before Home opens, close PS5 Browser and replace the complete PPSA99257 folder with this build. Keep /data/ps5browser.
