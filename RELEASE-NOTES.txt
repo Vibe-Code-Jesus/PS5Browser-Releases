@@ -100,10 +100,22 @@ update downloads. Failed startup triggers rollback; browser data is preserved.
 
 ## This release
 
-PS5 Browser native 01.000.009 / original browser core 4.4.25.7
+PS5 Browser native 01.000.010 / browser core 4.4.25.8
 
-Startup fix: the native updater now reads its per-launch token from /dev/urandom. If the device cannot supply the full token, the browser can continue and update control remains unavailable for that session. The startup log identifies the last stage reached.
+This update focuses on browsing compatibility, downloads and recovery.
 
-Thanks to youss17x for isolating and testing the workaround on firmware 13.60 (issue #2). This rebuilt package still needs confirmation on affected consoles.
+- **CAPTCHA improvements:** Corrected site-to-port routing and improved verification-form destinations, redirects and return handling.
+- **Download improvements:** Better support for download buttons that submit forms. POST downloads keep the original authorized response instead of repeating the form submission or converting it into a GET request. Expired or interrupted single-use requests need a fresh submission.
+- **Redirect protection:** Stronger checks for known advertising destinations, dynamically added frames and transparent click overlays, plus editable blocking rules for individual websites in Settings → Browsing.
+- **Black-screen recovery:** Added recovery handling for returning to PS5 Browser after switching to another app, while retaining the browser session and avoiding interruption of a healthy download service.
+- **TorBox account creation:** When no account is linked, **Create Account** opens a small QR-code dialog. Scan it to sign up on your phone, choose **Proceed on PS5**, or close it.
 
-If the installed version crashes before Home opens, close PS5 Browser and replace the complete PPSA99257 folder with this build. Keep /data/ps5browser.
+The TorBox signup link includes my personal referral code. I may earn a referral reward, which helps support TorBox testing and improvements to its integration with PS5 Browser.
+
+**Issue reporting is not enabled in this release.** The private reporting inbox is not online yet. The reporting screen's Send action remains disabled; there are no diagnostic uploads or scheduled log uploads. Reporting will be enabled in a later update after the inbox is verified.
+
+This is a native preview. Local compatibility and update-recovery checks passed. The new foreground recovery and affected CAPTCHA/download flows still need confirmation on physical PS5 consoles; website and firmware compatibility can vary.
+
+Update through **Update via GitHub**, or install the complete `PPSA99257` folder from the ZIP. Keep `/data/ps5browser` to preserve browser data. If startup fails, keep `/data/ps5browser-native-startup.log` before reopening.
+
+Thank you to everyone reporting issues and helping test PS5 Browser.

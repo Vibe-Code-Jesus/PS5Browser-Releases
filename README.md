@@ -151,18 +151,8 @@ JavaScript-heavy sites, DRM and some streaming services may not work. Media
 playback depends on the available formats and codecs. Cloudflare/CAPTCHA and
 TorBox support vary by site and provider.
 
-## Public downloads and private source
+## Installation package
 
-This public repository contains compiled packages, artwork, documentation,
-license notices and release automation. Application source and owner development
-backups are kept separately and are not uploaded here.
-
-GitHub adds automatic **Source code (zip/tar.gz)** links to releases. Those links
-archive this release repository; they do **not** contain the PS5Browser application
-source. Download the named **Preview.zip** asset to install the app.
-
-For interruptions that prevent the app from starting, the package includes an
-independent recovery helper. See **PREVIEW.txt** inside the package for recovery
-instructions and diagnostic log locations.
+Download the named **Preview.zip** release asset to install the app. For startup interruptions, see `PREVIEW.txt` inside the package for recovery instructions and diagnostic log locations.
 
 Not affiliated with Sony Interactive Entertainment.
